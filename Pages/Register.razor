@@ -1,0 +1,40 @@
+﻿@page "/register"
+@using Example.Data.Models
+@using Radzen
+ <RadzenText Style="text-align:center; font-size:30px; font-weight:700; margin-bottom:12px;">Register</RadzenText>
+
+<RadzenCard Style="max-width:30%; height:300px; margin:0 auto; padding:8px; display:flex; flex-direction:column; justify-content:space-evenly;">
+    <RadzenLabel Text="Name" Component="Name" Style="cursor:pointer; font-weight:700;" />
+    <RadzenTextBox Trim @bind-Value="@Name" Style="width:100%; margin-right:4px" Placeholder="Write your name!" id="Name" />
+     <RadzenLabel Text="Email" Component="Email" Style="cursor:pointer; font-weight:700;" />
+     <RadzenTextBox Trim @bind-Value="@Email" Style="width:100%; margin-right:4px" Placeholder="Email!" id="Email" />
+     <RadzenLabel Text="Password" Component="Password" Style="cursor:pointer; font-weight:700;" />
+     <RadzenPassword Trim @bind-Value="@Password" Style="width:100%; margin-right:4px" Placeholder="Password!" id="Password" />
+     <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="RegisterAsync" Style="width:100%">Register</RadzenButton>
+</RadzenCard>
+
+ @code {
+    private string Name = string.Empty;
+    private string Email = string.Empty;
+    private string Password = string.Empty;
+
+    public async Task RegisterAsync()
+    {
+        var userSession = new UserSession
+            {
+                Name = Name,
+                Email = Email,
+                Password = Password,
+                Role =  "user"
+
+            };
+        var result  = await dapperService.RegisterHandle(userSession);
+        if(result == "success")
+        {
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(userSession);
+        }
+ 
+    }
+ 
+}
